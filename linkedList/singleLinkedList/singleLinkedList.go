@@ -33,7 +33,7 @@ func (l *LinkedList[T]) PushFront(value T) {
 	node := &Node[T]{
 		Value: value,
 	}
-	l.count--
+	l.count++
 	if l.root == nil {
 		l.root = node
 		l.tail = node
@@ -132,17 +132,17 @@ func (l *LinkedList[T]) InsertBefore(node *Node[T], value T) {
 	l.count++
 }
 
-func (l *LinkedList[T]) PopFront() {
+func (l *LinkedList[T]) PopFront() *Node[T] {
 	if l.root == nil {
-		return
+		return nil
 	}
-
-	l.root.next = nil
-	l.root = l.root.next
+	n := l.root
+	l.root.next, l.root = nil, l.root.next
 	if l.root == nil {
 		l.tail = nil
 	}
 	l.count--
+	return n
 }
 
 func (l *LinkedList[T]) Remove(node *Node[T]) {
@@ -161,4 +161,32 @@ func (l *LinkedList[T]) Remove(node *Node[T]) {
 		l.tail = prev
 	}
 	l.count--
+}
+func (l *LinkedList[T]) Reverse() {
+	newL := &LinkedList[T]{}
+	for l.root != nil {
+		n := l.PopFront()
+		newL.PushFront(n.Value)
+	}
+	l.count = newL.count
+	l.root = newL.root
+	l.tail = newL.tail
+}
+func (l *LinkedList[T]) Reverse2() {
+	if l.root == nil {
+		return
+	}
+	node := l.root
+	next := node.next
+	l.root.next = nil
+
+	for next != nil {
+		nextNext := next.next
+		next.next = node
+
+		node = next
+		next = nextNext
+	}
+
+	l.root, l.tail = l.tail, l.root
 }
